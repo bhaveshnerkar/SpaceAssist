@@ -134,25 +134,51 @@ export default function PrototypeMediaPipeCamera({ expectedMotion, onMotion, onF
         videoRef.current.srcObject = stream
         await videoRef.current.play()
         setStatus('Camera ONLINE • loading MediaPipe pose model…')
+let landmarker = null
 
-        let landmarker = null
-        try {
-          const { FilesetResolver, PoseLandmarker } = await import('@mediapipe/tasks-vision')
-          const REMOTE_WASM = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm'
-          const REMOTE_MODEL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task'
-          let vision
-          try {
-            vision = await FilesetResolver.forVisionTasks(WASM)
-          } catch {
-            vision = await FilesetResolver.forVisionTasks(REMOTE_WASM)
-          }
-          try {
-            landmarker = await PoseLandmarker.createFromOptions(vision, {
-              baseOptions: { modelAssetPath: MODEL },
-              runningMode: 'VIDEO', numPoses: 1,
-              minPoseDetectionConfidence: 0.35, minPosePresenceConfidence: 0.35, minTrackingConfidence: 0.35,
-            })
-          } catch {
+try {
+  const { FilesetResolver, PoseLandmarker } =
+    await import('@mediapipe/tasks-vision')
+
+  console.log('MediaPipe package loaded')
+
+  const vision = await FilesetResolver.forVisionTasks(WASM)
+
+  console.log('MediaPipe WASM loaded')
+
+  landmarker = await PoseLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath: MODEL,
+    },
+    runningMode: 'VIDEO',
+    numPoses: 1,
+    minPoseDetectionConfidence: 0.35,
+    minPosePresenceConfidence: 0.35,
+    minTrackingConfidence: 0.35,
+  })
+
+  console.log('MediaPipe PoseLandmarker created')
+
+  if (!cancelled) {
+    landmarkerRef.current = landmarker
+    setSource('mediapipe-geometry')
+    setStatus('MediaPipe ONLINE • 33 landmarks tracking')
+    setError('')
+  }
+
+} catch (mediaPipeError) {
+
+  console.error('🔥 MEDIAPIPE FAILED:', mediaPipeError)
+
+  setSource('camera-motion-fallback')
+  setStatus('Camera ONLINE • MediaPipe failed')
+  setError(
+    `MediaPipe failed: ${
+      mediaPipeError?.message || 'Unknown MediaPipe error'
+    }`
+  )
+}
+        catch {
             landmarker = await PoseLandmarker.createFromOptions(vision, {
               baseOptions: { modelAssetPath: REMOTE_MODEL },
               runningMode: 'VIDEO', numPoses: 1,
