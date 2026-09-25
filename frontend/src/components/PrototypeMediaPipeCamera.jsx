@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 
 // Browser-side MediaPipe. The camera itself starts first, so a slow model download
 // never leaves the user looking at a blank panel.
-const WASM = '/wasm'
-const MODEL = '/models/pose_landmarker_full.task'
+const WASM = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm'
+const MODEL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task'
 
 const POSE_CONNECTIONS = [
   [0,1],[1,2],[2,3],[3,7],[0,4],[4,5],[5,6],[6,8],
