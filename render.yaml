@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: spaceassist-backend
+    runtime: python
+    pythonVersion: 3.11
+    rootDir: backend
+    startCommand: "cd ../backend && python download_models.py && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    buildCommand: "pip install -r requirements.txt && python download_models.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
