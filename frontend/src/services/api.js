@@ -11,7 +11,7 @@
  */
 
 
-const BASE_URL = 'https://spaceassist.onrender.com/api'
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://spaceassist.onrender.com/api'
 
 export async function getExperiment() {
   const res = await fetch(`${BASE_URL}/experiment`)

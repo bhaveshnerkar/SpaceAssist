@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 
 // Browser-side MediaPipe
 const WASM =
-  'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm'
+  '/mediapipe/wasm'
 
 const MODEL =
-  'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task'
+  '/mediapipe/pose_landmarker_full.task'
 
 const POSE_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 7],
@@ -441,7 +441,7 @@ export default function PrototypeMediaPipeCamera({
               vision,
               {
                 baseOptions: {
-                  modelAssetPath: MODEL
+                  modelAssetPath: MODEL, delegate: 'CPU', delegate: 'CPU'
                 },
 
                 runningMode: 'VIDEO',
